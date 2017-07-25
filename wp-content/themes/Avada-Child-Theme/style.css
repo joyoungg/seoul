@@ -7,3 +7,11 @@ Template: Avada
 Version: 1.0.0
 Text Domain:  Avada
 */
+
+ul.side-nav > li:first-child {
+    display: none;
+}
+
+#main.width-100 img {   /* 임시처리 */
+    width: 100%;
+}

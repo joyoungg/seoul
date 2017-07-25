@@ -16,3 +16,5 @@ wp-content/plugins/hello.php
 /sitemap.xml
 /sitemap.xml.gz
 
+.idea
+wp-content/plugins/contact-form-7/
