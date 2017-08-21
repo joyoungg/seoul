@@ -17,4 +17,5 @@
 /sitemap.xml.gz
 
 .idea
-wp-content/plugins/contact-form-7/
+
+#wp-content/plugins/contact-form-7/
