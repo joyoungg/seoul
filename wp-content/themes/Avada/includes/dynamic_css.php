@@ -785,6 +785,7 @@ function avada_dynamic_css_array( $original_css = array() ) {
 
 	$elements = array(
 		'#wrapper #main .post > h2.fusion-post-title',
+		'#wrapper #main .post > .fusion-post-title-meta-wrap > h2.fusion-post-title',
 		'#wrapper #main .fusion-post-content > .blog-shortcode-post-title',
 		'#wrapper #main .fusion-post-content > h2.fusion-post-title',
 		'#wrapper #main .fusion-portfolio-content > h2.fusion-post-title',
@@ -1122,6 +1123,7 @@ function avada_dynamic_css_array( $original_css = array() ) {
 	$css['global']['.ei-title h2']['color'] = Fusion_Sanitize::color( Avada()->settings->get( 'es_title_color' ) );
 	$css['global']['.ei-title h3']['color'] = Fusion_Sanitize::color( Avada()->settings->get( 'es_caption_color' ) );
 
+	// Blog element load more button.
 	$css['global']['.fusion-load-more-button.fusion-blog-button']['background-color'] = Fusion_Sanitize::color( Avada()->settings->get( 'blog_load_more_posts_button_bg_color' ) );
 	$css['global']['.fusion-load-more-button.fusion-blog-button:hover']['background-color'] = Fusion_Color::new_color( Avada()->settings->get( 'blog_load_more_posts_button_bg_color' ) )->get_new( 'alpha', '0.8' )->to_css( 'rgba' );
 
@@ -1133,6 +1135,7 @@ function avada_dynamic_css_array( $original_css = array() ) {
 	);
 	$css['global'][ $dynamic_css_helpers->implode( $elements ) ]['color'] = $text_color;
 
+	// Portfolio element load more button.
 	$css['global']['.fusion-load-more-button.fusion-portfolio-button']['background-color'] = Fusion_Sanitize::color( Avada()->settings->get( 'portfolio_load_more_posts_button_bg_color' ) );
 	$css['global']['.fusion-load-more-button.fusion-portfolio-button:hover']['background-color'] = Fusion_Color::new_color( Avada()->settings->get( 'portfolio_load_more_posts_button_bg_color' ) )->get_new( 'alpha', '0.8' )->to_css( 'rgba' );
 
@@ -1141,6 +1144,18 @@ function avada_dynamic_css_array( $original_css = array() ) {
 	$elements = array(
 		'.fusion-load-more-button.fusion-portfolio-button',
 		'.fusion-load-more-button.fusion-portfolio-button:hover',
+	);
+	$css['global'][ $dynamic_css_helpers->implode( $elements ) ]['color'] = $text_color;
+
+	// Portfolio Archive load more button.
+	$css['global']['.fusion-portfolio-archive .fusion-load-more-button.fusion-portfolio-button']['background-color'] = Fusion_Sanitize::color( Avada()->settings->get( 'portfolio_archive_load_more_posts_button_bg_color' ) );
+	$css['global']['.fusion-portfolio-archive .fusion-load-more-button.fusion-portfolio-button:hover']['background-color'] = Fusion_Color::new_color( Avada()->settings->get( 'portfolio_archive_load_more_posts_button_bg_color' ) )->get_new( 'alpha', '0.8' )->to_css( 'rgba' );
+
+	$button_brightness = fusion_calc_color_brightness( Fusion_Sanitize::color( Avada()->settings->get( 'portfolio_archive_load_more_posts_button_bg_color' ) ) );
+	$text_color        = ( 140 < $button_brightness ) ? '#333' : '#fff';
+	$elements = array(
+		'.fusion-portfolio-archive .fusion-load-more-button.fusion-portfolio-button',
+		'.fusion-portfolio-archive .fusion-load-more-button.fusion-portfolio-button:hover',
 	);
 	$css['global'][ $dynamic_css_helpers->implode( $elements ) ]['color'] = $text_color;
 
@@ -5680,7 +5695,7 @@ function avada_dynamic_css_array( $original_css = array() ) {
 				'table.tribe-events-tickets tr .tickets_price',
 				'table.tribe-events-tickets tr td.add-to-cart',
 				'table.tribe-events-tickets tr td.tribe-tickets-attendees',
-				'table.tribe-events-tickets .tribe-tickets-attendees-list-optout > td'
+				'table.tribe-events-tickets .tribe-tickets-attendees-list-optout > td',
 			);
 			$css[ $content_media_query ][ $dynamic_css_helpers->implode( $elements ) ]['display'] = 'inline-block';
 			$css[ $content_media_query ][ $dynamic_css_helpers->implode( $elements ) ]['width'] = '100%';
@@ -5691,9 +5706,7 @@ function avada_dynamic_css_array( $original_css = array() ) {
 
 			$css[ $content_media_query ]['table.tribe-events-tickets tr td.add-to-cart']['border-bottom'] = 'none';
 
-
 			$css[ $content_media_query ]['.fusion-body .tribe-events-tickets-rsvp .quantity input']['padding'] = '0';
-
 
 		} // End if().
 

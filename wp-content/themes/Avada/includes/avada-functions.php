@@ -1082,6 +1082,7 @@ if ( ! function_exists( 'avada_header_template' ) ) {
 		$theme_option_slider_position = Avada()->settings->get( 'slider_position' );
 		$page_option_slider_position  = fusion_get_page_option( 'slider_position', $page_id );
 
+
 		if ( ( ! $theme_option_slider_position || ( $slider_position == $theme_option_slider_position && strtolower( $reverse_position ) != $page_option_slider_position ) || ( $theme_option_slider_position != $slider_position && strtolower( $slider_position ) == $page_option_slider_position ) ) && ! is_page_template( 'blank.php' ) && 'no' != fusion_get_page_option( 'display_header', $page_id ) && 'Top' == Avada()->settings->get( 'header_position' ) ) {
 			$header_wrapper_class  = 'fusion-header-wrapper';
 			$header_wrapper_class .= ( Avada()->settings->get( 'header_shadow' ) ) ? ' fusion-header-shadow' : '';

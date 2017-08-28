@@ -26,6 +26,7 @@ class Avada_Settings extends Fusion_Settings {
 	 * @return Fusion_Settings
 	 */
 	public static function get_instance() {
+
 		if ( null === parent::$instance ) {
 			parent::$instance = new parent();
 		}

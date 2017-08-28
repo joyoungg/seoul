@@ -218,7 +218,7 @@ class Avada_Breadcrumbs {
 				$posts_page         = get_option( 'page_for_posts' );
 				$posts_page_title   = get_the_title( $posts_page );
 				$this->html_markup .= $this->get_single_breadcrumb_markup( $posts_page_title, '', true, true, true );
-			} else if ( is_tag() || is_category() || is_date() || is_author() ) {
+			} else if ( ( is_tax() || is_tag() || is_category() || is_date() || is_author() ) && $this->show_post_type_archive && ! Avada_Helper::is_woocommerce() && ! Avada_Helper::is_bbpress() ) {
 				$this->html_markup .= $this->get_post_type_archive();
 			}
 
@@ -231,7 +231,7 @@ class Avada_Breadcrumbs {
 				} else {
 					$this->html_markup .= $this->get_post_type_archive( false );
 				}
-			} elseif ( is_tax() || is_tag() || is_category() ) {
+			} else if ( is_tax() || is_tag() || is_category() ) {
 
 				// Taxonomy Archives.
 				if ( is_tag() ) { // If we have a tag archive, add the tag prefix.
@@ -239,7 +239,7 @@ class Avada_Breadcrumbs {
 				}
 				$this->html_markup .= $this->get_taxonomies();
 				$this->html_markup .= $this->get_breadcrumb_leaf_markup( 'term' );
-			} elseif ( is_date() ) {
+			} else if ( is_date() ) {
 				// Date Archives.
 				global $wp_locale;
 				$year = esc_html( get_query_var( 'year' ) );
@@ -250,11 +250,11 @@ class Avada_Breadcrumbs {
 				// Year Archive, only is a leaf.
 				if ( is_year() ) {
 					$this->html_markup .= $this->get_breadcrumb_leaf_markup( 'year' );
-				} elseif ( is_month() ) {
+				} else if ( is_month() ) {
 					// Month Archive, needs year link and month leaf.
 					$this->html_markup .= $this->get_single_breadcrumb_markup( $year, get_year_link( $year ) );
 					$this->html_markup .= $this->get_breadcrumb_leaf_markup( 'month' );
-				} elseif ( is_day() ) {
+				} else if ( is_day() ) {
 					// Day Archive, needs year and month link and day leaf.
 					global $wp_locale;
 
@@ -268,13 +268,13 @@ class Avada_Breadcrumbs {
 					$this->html_markup .= $this->get_single_breadcrumb_markup( $month_name, get_month_link( $year, $month ) );
 					$this->html_markup .= $this->get_breadcrumb_leaf_markup( 'day' );
 				}
-			} elseif ( is_author() ) {
+			} else if ( is_author() ) {
 				// Author Archives.
 				$this->html_markup .= $this->get_breadcrumb_leaf_markup( 'author' );
-			} elseif ( is_search() ) {
+			} else if ( is_search() ) {
 				// Search Page.
 				$this->html_markup .= $this->get_breadcrumb_leaf_markup( 'search' );
-			} elseif ( is_404() ) {
+			} else if ( is_404() ) {
 				// 404 Page.
 				// Special treatment for Events Calendar to avoid 404 messages on list view.
 				if ( Avada_Helper::tribe_is_event() || Avada_Helper::is_events_archive() ) {
@@ -282,7 +282,7 @@ class Avada_Breadcrumbs {
 				} else {
 					$this->html_markup .= $this->get_breadcrumb_leaf_markup( '404' );
 				}
-			} elseif ( class_exists( 'bbPress' ) ) {
+			} else if ( class_exists( 'bbPress' ) ) {
 				// bbPress.
 				// Search Page.
 				if ( Avada_Helper::bbp_is_search() ) {

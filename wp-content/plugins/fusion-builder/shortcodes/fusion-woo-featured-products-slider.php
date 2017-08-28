@@ -135,7 +135,7 @@ if ( fusion_is_element_enabled( 'fusion_featured_products_slider' ) ) {
 								$image = fusion_render_first_featured_image_markup( get_the_ID(), $featured_image_size, get_permalink( get_the_ID() ), true, $show_price, $show_buttons, $show_cats );
 								// Title below image layout.
 							} else {
-								if ( 'yes' === $show_buttons ) {
+								if ( $show_buttons ) {
 									$image = fusion_render_first_featured_image_markup( get_the_ID(), $featured_image_size, get_permalink( get_the_ID() ), true, false, $show_buttons, 'disable', 'disable' );
 								} else {
 									$image = fusion_render_first_featured_image_markup( get_the_ID(), $featured_image_size, get_permalink( get_the_ID() ), true, false, $show_buttons, 'disable', 'disable', '', '', 'no' );

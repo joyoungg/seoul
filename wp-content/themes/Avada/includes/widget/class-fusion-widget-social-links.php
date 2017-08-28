@@ -383,7 +383,7 @@ class Fusion_Widget_Social_Links extends WP_Widget {
 		$instance['show_custom']        = isset( $new_instance['show_custom'] ) ? $new_instance['show_custom'] : '';
 		$instance['fb_link']            = isset( $new_instance['fb_link'] ) ? $new_instance['fb_link'] : '';
 		$instance['flickr_link']        = isset( $new_instance['flickr_link'] ) ? $new_instance['flickr_link'] : '';
-		$instance['rss_link']           = isset( $new_instance['rss_link'] ) ? $new_instance['twitter_link'] : '';
+		$instance['rss_link']           = isset( $new_instance['rss_link'] ) ? $new_instance['rss_link'] : '';
 		$instance['twitter_link']       = isset( $new_instance['twitter_link'] ) ? $new_instance['twitter_link'] : '';
 		$instance['vimeo_link']         = isset( $new_instance['vimeo_link'] ) ? $new_instance['vimeo_link'] : '';
 		$instance['youtube_link']       = isset( $new_instance['youtube_link'] ) ? $new_instance['youtube_link'] : '';

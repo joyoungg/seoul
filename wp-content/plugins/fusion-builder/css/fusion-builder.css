@@ -806,6 +806,9 @@
   color: #32373c;
   width: 265px !important;
 }
+body > .mce-floatpanel {
+  z-index: 99999 !important;
+}
 .fusion-builder-modal-settings-container {
   -webkit-box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);
           box-shadow: 0 0 100px rgba(0, 0, 0, 0.5);

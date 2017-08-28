@@ -200,7 +200,7 @@ if ( fusion_is_element_enabled( 'fusion_recent_posts' ) ) {
 
 				extract( $defaults );
 
-				// Deprecated 5.2.1 hide value, mapped to no.
+				// Depreciated 5.2.1 hide value, mapped to no.
 				if ( 'hide' === $excerpt ) {
 					$excerpt = 'no';
 				}

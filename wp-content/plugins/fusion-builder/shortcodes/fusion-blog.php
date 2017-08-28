@@ -557,6 +557,8 @@ if ( fusion_is_element_enabled( 'fusion_blog' ) ) {
 					</div>
 					<?php if ( ( 'pagination' !== $this->args['scrolling'] && 'Pagination' !== $blog_global_pagination ) ) : ?>
 						<div class="fusion-infinite-scroll-trigger"></div>
+					<?php else : ?>
+						<div class="fusion-clearfix"></div>
 					<?php endif; ?>
 					<?php
 					// Needed for Theme check.
@@ -630,7 +632,7 @@ if ( fusion_is_element_enabled( 'fusion_blog' ) ) {
 
 				$attr['class'] = 'fusion-posts-container fusion-posts-container-' . $this->args['scrolling'] . $load_more;
 
-				if ( ! $this->args['meta_all'] ) {
+				if ( ! $this->args['meta_info_combined'] ) {
 					$attr['class'] .= ' fusion-no-meta-info';
 				}
 

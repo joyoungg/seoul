@@ -842,82 +842,65 @@ class Avada_Woocommerce {
 		global $woocommerce;
 		$woo_default_catalog_orderby = get_option( 'woocommerce_default_catalog_orderby' );
 
+		// Get the query args.
 		if ( isset( $_SERVER['QUERY_STRING'] ) ) {
 			parse_str( sanitize_text_field( wp_unslash( $_SERVER['QUERY_STRING'] ) ), $params );
 		}
 
+		// Get order by.
 		$pob = ( ! empty( $params['product_orderby'] ) ) ? $params['product_orderby'] : $woo_default_catalog_orderby;
 
+		// Get order.
 		$po = 'asc';
 		if ( isset( $params['product_order'] ) ) {
+			// Dedicated ordering.
 			$po = $params['product_order'];
-		}
-
-		if ( empty( $params['product_order'] ) && empty( $params['product_orderby'] ) ) {
-			$po = $args['order'];
-			if ( ! isset( $args['order'] ) ) {
-				$po = 'asc';
-				if ( 'date' === $woo_default_catalog_orderby || 'popularity' === $woo_default_catalog_orderby || 'price-desc' === $woo_default_catalog_orderby ) {
-					$po = 'desc';
-				}
+		} else {
+			// Get the correct default order.
+			$po = 'asc';
+			if ( 'date' === $pob || 'popularity' === $pob || 'rating' === $pob || 'price-desc' === $pob ) {
+				$po = 'desc';
 			}
 		}
 
 		// Remove posts_clause filter, if default ordering is set to rating or popularity to make custom ordering work correctly.
 		if ( 'default' !== $pob ) {
-			if ( 'rating' === $woo_default_catalog_orderby || 'popularity' === $woo_default_catalog_orderby ) {
+			if ( 'popularity' === $woo_default_catalog_orderby || 'rating' === $woo_default_catalog_orderby ) {
 				WC()->query->remove_ordering_args();
 			}
 		}
 
 		$orderby  = 'date';
-
+		$order    = strtoupper( $po );
 		$meta_key = '';
 
 		switch ( $pob ) {
 			case 'menu_order':
 			case 'default':
 				$orderby  = $args['orderby'];
-				$order    = $args['order'];
 				break;
 			case 'date':
-				$order    = 'desc';
+				$orderby  = 'date';
 				break;
 			case 'price':
-				$orderby  = 'meta_value_num';
-				$order    = 'asc';
-				$meta_key = '_price';
-				break;
 			case 'price-desc':
-				$orderby  = 'meta_value_num';
-				$order    = 'desc';
-				$meta_key = '_price';
+				add_filter( 'posts_clauses', array( $this, 'order_by_price_post_clauses' ) );
+				add_action( 'wp', array( $this, 'remove_ordering_args_filters' ) );
 				break;
 			case 'popularity':
-				$orderby  = 'meta_value_num';
-				$order    = 'desc';
 				$meta_key = 'total_sales';
+				add_filter( 'posts_clauses', array( $this, 'order_by_popularity_post_clauses' ) );
+				add_action( 'wp', array( $this, 'remove_ordering_args_filters' ) );
 				break;
 			case 'rating':
-				$orderby  = 'meta_value_num';
-				$order    = 'desc';
-				$meta_key = 'average_rating';
+				$meta_key = '_wc_average_rating';
+				$orderby  = array(
+					'meta_value_num' => strtoupper( $po ),
+					'ID'             => 'ASC',
+				);
 				break;
 			case 'name':
 				$orderby  = 'title';
-				$order    = 'asc';
-				break;
-		}
-
-		switch ( strtolower( $po ) ) {
-			case 'desc':
-				$order = 'desc';
-				break;
-			case 'asc':
-				$order = 'asc';
-				break;
-			default:
-				$order = 'asc';
 				break;
 		}
 
@@ -925,20 +908,27 @@ class Avada_Woocommerce {
 		$args['order']    = $order;
 		$args['meta_key'] = $meta_key;
 
-		if ( 'popularity' == $pob ) {
-			add_filter( 'posts_clauses', array( $this, 'order_by_popularity_post_clauses' ) );
-			add_action( 'wp', array( $this, 'remove_ordering_args_filters' ) );
+		return $args;
+	}
+
+	/**
+	 * The order_by_price_post_clauses method.
+	 *
+	 * @access public
+	 * @since 5.2.2
+	 * @param array $args The arguments array.
+	 * @return array The altered arguments array.
+	 */
+	public function order_by_price_post_clauses( $args ) {
+		global $wpdb;
+		if ( isset( $_SERVER['QUERY_STRING'] ) ) {
+			parse_str( sanitize_text_field( wp_unslash( $_SERVER['QUERY_STRING'] ) ), $params );
 		}
 
-		if ( 'rating' == $pob ) {
-			$args['orderby']  = 'menu_order title';
-			$args['order']    = 'desc' == $po ? 'desc' : 'asc';
-			$args['order']    = strtoupper( $args['order'] );
-			$args['meta_key'] = '';
-
-			add_filter( 'posts_clauses', array( $this, 'order_by_rating_post_clauses' ) );
-			add_action( 'wp', array( $this, 'remove_ordering_args_filters' ) );
-		}
+		$order = empty( $params['product_order'] ) ? 'DESC' : strtoupper( $params['product_order'] );
+		$min_max = ( 'DESC' === $order ) ? 'max' : 'min';
+		$args['join']    .= " INNER JOIN ( SELECT post_id, {$min_max}( meta_value+0 ) price FROM $wpdb->postmeta WHERE meta_key='_price' GROUP BY post_id ) as fusion_price_query ON $wpdb->posts.ID = fusion_price_query.post_id ";
+		$args['orderby'] = " fusion_price_query.price {$order} ";
 		return $args;
 	}
 
@@ -968,40 +958,9 @@ class Avada_Woocommerce {
 	 * @since 5.0.4
 	 */
 	public function remove_ordering_args_filters() {
+		remove_filter( 'posts_clauses', array( $this, 'order_by_price_post_clauses' ) );
 		remove_filter( 'posts_clauses', array( $this, 'order_by_popularity_post_clauses' ) );
 		remove_filter( 'posts_clauses', array( $this, 'order_by_rating_post_clauses' ) );
-	}
-
-	/**
-	 * The order_by_rating_post_clauses method.
-	 *
-	 * @access public
-	 * @since 5.1.0
-	 * @param array $args The arguments array.
-	 * @return array The altered arguments array.
-	 */
-	public function order_by_rating_post_clauses( $args ) {
-
-		global $wpdb;
-
-		$args['fields'] .= ", AVG( $wpdb->commentmeta.meta_value ) as average_rating ";
-		$args['where']  .= " AND ( $wpdb->commentmeta.meta_key = 'rating' OR $wpdb->commentmeta.meta_key IS null ) ";
-
-		$args['join'] .= "
-		LEFT OUTER JOIN $wpdb->comments ON($wpdb->posts.ID = $wpdb->comments.comment_post_ID)
-		LEFT JOIN $wpdb->commentmeta ON($wpdb->comments.comment_ID = $wpdb->commentmeta.comment_id)
-		";
-
-		if ( isset( $_SERVER['QUERY_STRING'] ) ) {
-			parse_str( sanitize_text_field( wp_unslash( $_SERVER['QUERY_STRING'] ) ), $params );
-		}
-		$order = ! empty( $params['product_order'] ) ? $params['product_order'] : 'desc';
-		$order = strtoupper( $order );
-
-		$args['orderby'] = "average_rating {$order}, $wpdb->posts.post_date {$order}";
-		$args['groupby'] = "$wpdb->posts.ID";
-
-		return $args;
 	}
 
 	/**

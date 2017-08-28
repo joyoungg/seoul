@@ -305,6 +305,10 @@ if ( ! class_exists( 'Avada_Nav_Walker' ) ) {
 			$menu_display_dropdown_indicator = Avada()->settings->get( 'menu_display_dropdown_indicator' );
 			$menu_heighlight_style           = Avada()->settings->get( 'menu_highlight_style' );
 
+			if ( null === $item->menu_item_parent ) {
+				$item->menu_item_parent = '0';
+			}
+
 			if ( 'v7' === $header_layout ) {
 				if ( ! isset( $this->middle_logo_menu_break_point ) ) {
 
@@ -315,6 +319,10 @@ if ( ! class_exists( 'Avada_Nav_Walker' ) ) {
 					$middle_logo_menu_top_level_elements = 0;
 
 					foreach ( $middle_logo_menu_elements as $menu_element ) {
+						if ( null === $menu_element->menu_item_parent ) {
+							$menu_element->menu_item_parent = '0';
+						}
+
 						if ( '0' === $menu_element->menu_item_parent ) {
 							$middle_logo_menu_top_level_elements++;
 						}
@@ -440,7 +448,7 @@ if ( ! class_exists( 'Avada_Nav_Walker' ) ) {
 
 				$title = apply_filters( 'the_title', $item->title, $item->ID );
 
-				if ( ! ( ( empty( $item->url ) || '#' === $item->url || 'http://' === $item->url )  && 'disabled' === $this->menu_megamenu_title ) ) {
+				if ( ! ( ( empty( $item->url ) || '#' === $item->url || 'http://' === $item->url ) && 'disabled' === $this->menu_megamenu_title ) ) {
 					$heading      = do_shortcode( $title );
 					$link         = '';
 					$link_closing = '';
@@ -502,9 +510,9 @@ if ( ! class_exists( 'Avada_Nav_Walker' ) ) {
 
 				$atts = array();
 				$atts['title']  = ! empty( $item->attr_title ) ? esc_attr( $item->attr_title ) : '';
-				$atts['target'] = ! empty( $item->target )     ? esc_attr( $item->target )     : '';
-				$atts['rel']    = ! empty( $item->xfn )        ? esc_attr( $item->xfn )        : '';
-				$atts['href']   = ! empty( $item->url )        ? esc_attr( $item->url )        : '';
+				$atts['target'] = ! empty( $item->target ) ? esc_attr( $item->target ) : '';
+				$atts['rel']    = ! empty( $item->xfn ) ? esc_attr( $item->xfn ) : '';
+				$atts['href']   = ! empty( $item->url ) ? esc_attr( $item->url ) : '';
 				$atts['class']  = array();
 
 				if ( 'v7' === $header_layout && '0' === $item->menu_item_parent ) {
@@ -593,7 +601,7 @@ if ( ! class_exists( 'Avada_Nav_Walker' ) ) {
 				$title = $args->link_before . apply_filters( 'the_title', $item->title, $item->ID ) . $args->link_after;
 
 				// If we are top level, not using a button and have a description, then add that to the title.
-				if ( $item->description &&  0 === $depth && ! $this->menu_style ) {
+				if ( $item->description && 0 === $depth && ! $this->menu_style ) {
 					$title .= '<span class="fusion-menu-description">' . $item->description . '</span>';
 				}
 
@@ -666,8 +674,8 @@ if ( ! class_exists( 'Avada_Nav_Walker' ) ) {
 
 				// If we have an icon or thumbnail and the position is not left, then change order.
 				if ( ( ! empty( $this->menu_megamenu_icon ) || ! empty( $this->menu_megamenu_thumbnail ) ) &&
-					( $menu_icon_right || 'bottom' === $menu_icon_position )
-					&& ! $this->menu_style && 0 === $depth ) {
+				     ( $menu_icon_right || 'bottom' === $menu_icon_position )
+				     && ! $this->menu_style && 0 === $depth ) {
 					$item_output = $item_output . $opening_span . $title . '</span>' . $icon;
 				} elseif ( $this->menu_style || 0 !== $depth ) {
 					$item_output = $item_output . $opening_span . $icon . $title . '</span>';
@@ -759,6 +767,10 @@ if ( ! class_exists( 'Avada_Nav_Walker' ) ) {
 		 */
 		function end_el( &$output, $item, $depth = 0, $args = array() ) {
 			$output .= '</li>';
+
+			if ( null === $item->menu_item_parent ) {
+				$item->menu_item_parent = '0';
+			}
 
 			if ( '0' === $item->menu_item_parent ) {
 				$this->no_of_top_level_items_displayed++;

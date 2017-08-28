@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'Direct script access denied.' );
 }
 
-define( 'AVADA_VERSION', '5.2.1' );
+define( 'AVADA_VERSION', '5.2.2' );
 
 /**
  * Include Fusion-Library.

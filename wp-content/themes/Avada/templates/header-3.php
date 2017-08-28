@@ -46,15 +46,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<div class="fusion-toggle-icon-line"></div>
 							<div class="fusion-toggle-icon-line"></div>
 						</div>
-						<a class="fusion-icon fusion-icon-search" aria-hidden="true"></a>
+						<a class="fusion-icon fusion-icon-search" aria-hidden="true" href="#"></a>
 					</div>
 				<?php endif; ?>
 
-				<div class="fusion-flyout-menu-toggle" aria-hidden="true">
+				<a class="fusion-flyout-menu-toggle" aria-hidden="true" href="#">
 					<div class="fusion-toggle-icon-line"></div>
 					<div class="fusion-toggle-icon-line"></div>
 					<div class="fusion-toggle-icon-line"></div>
-				</div>
+				</a>
 			</div>
 		</div>
 

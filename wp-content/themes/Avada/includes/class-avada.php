@@ -162,12 +162,12 @@ class Avada {
 		'fusion_core' => array(
 			'slug'    => 'fusion-core',
 			'name'    => 'Fusion Core',
-			'version' => '3.2.1',
+			'version' => '3.2.2',
 		),
 		'fusion_builder' => array(
 			'slug'    => 'fusion-builder',
 			'name'    => 'Fusion Builder',
-			'version' => '1.2.1',
+			'version' => '1.2.2',
 		),
 		'layer_slider' => array(
 			'slug'    => 'LayerSlider',

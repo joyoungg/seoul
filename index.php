@@ -13,5 +13,15 @@
  */
 define('WP_USE_THEMES', true);
 
+function dd($value, $exit = true) {
+    echo "<pre>";
+    print_r($value);
+    echo "</pre>";
+    if ($exit) {
+        die();
+    }
+}
+
+
 /** Loads the WordPress Environment and Template */
 require( dirname( __FILE__ ) . '/wp-blog-header.php' );

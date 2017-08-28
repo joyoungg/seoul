@@ -2,8 +2,11 @@
 /**
  * Template name: map view
  */
+use App\RealEstate;
 
 get_header();
+
+//var_dump(RealEstate::First());
 
 ?>
     <style>

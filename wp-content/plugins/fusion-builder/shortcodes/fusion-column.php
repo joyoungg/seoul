@@ -269,7 +269,9 @@ if ( ! class_exists( 'FusionSC_Column' ) ) {
 				if ( class_exists( 'Fusion_Color' ) ) {
 					$alpha = Fusion_Color::new_color( $background_color )->alpha;
 				}
-				if ( empty( $background_image ) || 1 > $alpha ) {
+				if ( empty( $background_image ) || 1 > $alpha && 0 !== $alpha ) {
+
+					$classes .= ' fusion-blend-mode';
 					$background_color_style = 'background-color:' . esc_attr( $background_color ) . ';';
 					if ( ( 'none' === $hover_type || empty( $hover_type ) ) && empty( $link ) ) {
 						$wrapper_style .= $background_color_style;

@@ -4,7 +4,7 @@
 Plugin Name: Fusion Builder
 Plugin URI: http://www.theme-fusion.com
 Description: ThemeFusion Page Builder Plugin
-Version: 1.2.1
+Version: 1.2.2
 Author: ThemeFusion
 Author URI: http://www.theme-fusion.com
 */
@@ -21,7 +21,7 @@ if ( ! defined( 'FUSION_BUILDER_DEV_MODE' ) ) {
 
 // Plugin version.
 if ( ! defined( 'FUSION_BUILDER_VERSION' ) ) {
-	define( 'FUSION_BUILDER_VERSION', '1.2.1' );
+	define( 'FUSION_BUILDER_VERSION', '1.2.2' );
 }
 // Plugin Folder Path.
 if ( ! defined( 'FUSION_BUILDER_PLUGIN_DIR' ) ) {
@@ -170,7 +170,7 @@ if ( ! class_exists( 'FusionBuilder' ) ) :
 
 				// If the single instance hasn't been set, set it now.
 				if ( null == self::$instance ) {
-					self::$instance = new self;
+					self::$instance = new self();
 				}
 			} else {
 				add_action( 'edit_form_after_title', 'fusion_builder_add_notice_of_disabled_rich_editor' );
@@ -207,10 +207,12 @@ if ( ! class_exists( 'FusionBuilder' ) ) :
 			$this->register_scripts();
 			$this->init();
 			if ( is_admin() && ! class_exists( 'Avada' ) ) {
-				$this->registration = new Fusion_Product_Registration( array(
-					'type' => 'plugin',
-					'name' => 'Fusion Builder',
-				) );
+				$this->registration = new Fusion_Product_Registration(
+					array(
+						'type' => 'plugin',
+						'name' => 'Fusion Builder',
+					)
+				);
 			}
 			add_action( 'fusion_settings_construct', array( $this, 'add_options_to_fusion_settings' ) );
 
@@ -287,6 +289,9 @@ if ( ! class_exists( 'FusionBuilder' ) ) :
 			add_filter( 'fusion_dynamic_css_final', array( $this, 'shortcode_styles_dynamic_css' ) );
 
 			add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'add_action_settings_link' ) );
+
+			// Exclude post types from Events Calendar.
+			add_filter( 'tribe_tickets_settings_post_types', array( $this, 'fusion_builder_exclude_post_type' ) );
 		}
 
 		/**
@@ -570,12 +575,13 @@ if ( ! class_exists( 'FusionBuilder' ) ) :
 			global $typenow;
 
 			wp_nonce_field( basename( __FILE__ ), 'fusion_settings_nonce' );
-
-			if ( isset( $typenow ) && in_array( $typenow, $this->allowed_post_types(), true ) ) : ?>
+			?>
+			<?php if ( isset( $typenow ) && in_array( $typenow, $this->allowed_post_types(), true ) ) : ?>
 				<p class="fusion_page_settings">
 					<input type="text" id="fusion_use_builder" name="fusion_use_builder" value="<?php echo esc_attr( get_post_meta( $post->ID, 'fusion_builder_status', true ) ); ?>" />
 				</p>
-			<?php endif;
+			<?php endif; ?>
+			<?php
 
 		}
 
@@ -1045,10 +1051,12 @@ if ( ! class_exists( 'FusionBuilder' ) ) :
 				wp_enqueue_script( 'fusion_builder_importer_js', FUSION_BUILDER_PLUGIN_URL . 'inc/importer/js/fusion-builer-importer.js', '', FUSION_BUILDER_VERSION, true );
 
 				// Localize Scripts.
-				wp_localize_script( 'fusion_builder_importer_js', 'fusionBuilderConfig', array(
-					'ajaxurl' => admin_url( 'admin-ajax.php' ),
-					'fusion_import_nonce' => wp_create_nonce( 'fusion_import_nonce' ),
-				) );
+				wp_localize_script(
+					'fusion_builder_importer_js', 'fusionBuilderConfig', array(
+						'ajaxurl' => admin_url( 'admin-ajax.php' ),
+						'fusion_import_nonce' => wp_create_nonce( 'fusion_import_nonce' ),
+					)
+				);
 			}
 
 			// Load icons if Avada is not installed / active.
@@ -1166,15 +1174,17 @@ if ( ! class_exists( 'FusionBuilder' ) ) :
 					wp_enqueue_script( 'fusion_builder_history', FUSION_BUILDER_PLUGIN_URL . 'js/fusion-history.js', array( 'fusion_builder_app_util_js' ), FUSION_BUILDER_VERSION, true );
 
 					// Localize Scripts.
-					wp_localize_script( 'fusion_builder_app_js', 'fusionBuilderConfig', array(
-						'ajaxurl'                    => admin_url( 'admin-ajax.php' ),
-						'fusion_load_nonce'          => wp_create_nonce( 'fusion_load_nonce' ),
-						'fontawesomeicons'           => fusion_get_icons_array(),
-						'fusion_builder_plugin_dir'  => FUSION_BUILDER_PLUGIN_URL,
-						'includes_url'               => includes_url(),
-						'disable_encoding'           => get_option( 'avada_disable_encoding' ),
-						'full_width'                 => apply_filters( 'fusion_builder_width_hundred_percent', '' ),
-					) );
+					wp_localize_script(
+						'fusion_builder_app_js', 'fusionBuilderConfig', array(
+							'ajaxurl'                   => admin_url( 'admin-ajax.php' ),
+							'fusion_load_nonce'         => wp_create_nonce( 'fusion_load_nonce' ),
+							'fontawesomeicons'          => fusion_get_icons_array(),
+							'fusion_builder_plugin_dir' => FUSION_BUILDER_PLUGIN_URL,
+							'includes_url'              => includes_url(),
+							'disable_encoding'          => get_option( 'avada_disable_encoding' ),
+							'full_width'                => apply_filters( 'fusion_builder_width_hundred_percent', '' ),
+						)
+					);
 
 					// Localize scripts. Text strings.
 					wp_localize_script( 'fusion_builder_app_js', 'fusionBuilderText', fusion_builder_textdomain_strings() );
@@ -1186,15 +1196,17 @@ if ( ! class_exists( 'FusionBuilder' ) ) :
 					wp_enqueue_script( 'fusion_builder', FUSION_BUILDER_PLUGIN_URL . 'js/fusion-builder.js', array( 'jquery' ), FUSION_BUILDER_VERSION, true );
 
 					// Localize Script.
-					wp_localize_script( 'fusion_builder', 'fusionBuilderConfig', array(
-						'ajaxurl'                    => admin_url( 'admin-ajax.php' ),
-						'fusion_load_nonce'          => wp_create_nonce( 'fusion_load_nonce' ),
-						'fontawesomeicons'           => fusion_get_icons_array(),
-						'fusion_builder_plugin_dir'  => FUSION_BUILDER_PLUGIN_URL,
-						'includes_url'               => includes_url(),
-						'disable_encoding'           => get_option( 'avada_disable_encoding' ),
-						'full_width'                 => apply_filters( 'fusion_builder_width_hundred_percent', '' ),
-					) );
+					wp_localize_script(
+						'fusion_builder', 'fusionBuilderConfig', array(
+							'ajaxurl'                   => admin_url( 'admin-ajax.php' ),
+							'fusion_load_nonce'         => wp_create_nonce( 'fusion_load_nonce' ),
+							'fontawesomeicons'          => fusion_get_icons_array(),
+							'fusion_builder_plugin_dir' => FUSION_BUILDER_PLUGIN_URL,
+							'includes_url'              => includes_url(),
+							'disable_encoding'          => get_option( 'avada_disable_encoding' ),
+							'full_width'                => apply_filters( 'fusion_builder_width_hundred_percent', '' ),
+						)
+					);
 
 					// Localize script. Text strings.
 					wp_localize_script( 'fusion_builder', 'fusionBuilderText', fusion_builder_textdomain_strings() );
@@ -2010,6 +2022,22 @@ if ( ! class_exists( 'FusionBuilder' ) ) :
 
 			return $links;
 		}
+
+		/**
+		 * Return post types to exclude from events calendar.
+		 *
+		 * @since 1.3.0
+		 * @access public
+		 * @param array $all_post_types All allowed post types in events calendar.
+		 * @return array
+		 */
+		public function fusion_builder_exclude_post_type( $all_post_types ) {
+
+			unset( $all_post_types['fusion_template'] );
+			unset( $all_post_types['fusion_element'] );
+
+			return $all_post_types;
+		}
 	} // End FusionBuilder class.
 
 endif; // End if class_exists check.
@@ -2039,15 +2067,17 @@ function fusion_builder_activate() {
 	FusionBuilder::get_instance();
 	require_once FUSION_BUILDER_PLUGIN_DIR . 'inc/dynamic-css/dynamic_css.php';
 
-	$fb_patcher = new Fusion_Patcher( array(
-		'context'     => 'fusion-builder',
-		'version'     => FUSION_BUILDER_VERSION,
-		'name'        => 'Fusion-Builder',
-		'parent_slug' => 'fusion-builder-options',
-		'page_title'  => esc_attr__( 'Fusion Patcher', 'fusion-builder' ),
-		'menu_title'  => esc_attr__( 'Fusion Patcher', 'fusion-builder' ),
-		'classname'   => 'FusionBuilder',
-	) );
+	$fb_patcher = new Fusion_Patcher(
+		array(
+			'context'     => 'fusion-builder',
+			'version'     => FUSION_BUILDER_VERSION,
+			'name'        => 'Fusion-Builder',
+			'parent_slug' => 'fusion-builder-options',
+			'page_title'  => esc_attr__( 'Fusion Patcher', 'fusion-builder' ),
+			'menu_title'  => esc_attr__( 'Fusion Patcher', 'fusion-builder' ),
+			'classname'   => 'FusionBuilder',
+		)
+	);
 }
 add_action( 'after_setup_theme', 'fusion_builder_activate' );
 

@@ -38,7 +38,7 @@ if ( 'grid' === $blog_layout || 'masonry' === $blog_layout ) {
 	$container_class .= 'fusion-blog-layout-' . $blog_layout . ' ';
 }
 
-if ( ! Avada()->settings->get( 'post_meta' ) ) {
+if ( ! Avada()->settings->get( 'post_meta' ) || ( ! Avada()->settings->get( 'post_meta_author' ) && ! Avada()->settings->get( 'post_meta_date' ) && ! Avada()->settings->get( 'post_meta_cats' ) && ! Avada()->settings->get( 'post_meta_tags' ) && ! Avada()->settings->get( 'post_meta_comments' ) && ! Avada()->settings->get( 'post_meta_read' ) ) ) {
 	$container_class .= 'fusion-no-meta-info ';
 }
 

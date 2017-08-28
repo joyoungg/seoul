@@ -7,6 +7,32 @@ This is why we highly recommend to stay up to date with each new theme version a
 
 
 -----------------------------------------------------------------------------------------
+Version 5.2.2 - August 7th, 2017
+-----------------------------------------------------------------------------------------
+
+
+- FIXED: Fusion Builder text editor color picker and heading dropdown being hidden on WordPress 4.8.1
+- FIXED: WooCommerce product sorting not working correctly
+- FIXED: Gallery element not displaying correctly inside of toggles
+- FIXED: Alignment issue of content box icons using icon circles
+- FIXED: "Text display" setting in recent posts element changing from "None" to "Full Content"
+- FIXED: Bulk image upload from within advanced elements causing child element issue
+- FIXED: Title size being incorrect on single blog posts when meta details are below title
+- FIXED: Container and column background image not being visible in Chrome v60 (browser bug)
+- FIXED: "View Cart" link on product rollover not always being clickable
+- FIXED: Smooth scrolling to anchors not working for links on a different page
+- FIXED: Toggle Active Box Color not working on non-boxed toggles
+- FIXED: Demo removal issue (leading to empty Theme Option values) on clean installs when using PHP 7.1+
+- FIXED: Header v6 WCAG issue for the slide out toggle
+- FIXED: Image rollover not working on WooCommerce Featured Image element when using clean styling
+- FIXED: Issue with nicescroll on pages that use infinite scrolling or load more AJAX options
+- FIXED: RSS field automatically filled with same link as Twitter field in Social Links widget
+- FIXED: Container element border Theme Option not working correctly in individual elements
+- FIXED: Breadcrumbs post type for blog post archive pages always showing, even if disabled
+- FIXED: Load more button background color setting not working for portfolio archives
+
+
+-----------------------------------------------------------------------------------------
 Version 5.2.1 - July 17th, 2017
 -----------------------------------------------------------------------------------------
 

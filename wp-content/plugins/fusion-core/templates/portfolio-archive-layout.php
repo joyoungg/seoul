@@ -51,7 +51,7 @@ switch ( $portfolio_columns_int ) {
 $portfolio_layout         = 'fusion-portfolio-' . $portfolio_columns;
 
 // Set the portfolio main classes.
-$portfolio_classes[] = 'fusion-portfolio';
+$portfolio_classes[] = 'fusion-portfolio fusion-portfolio-archive';
 $portfolio_classes[] = 'fusion-portfolio-layout-' . $portfolio_layout_setting;
 $portfolio_classes[] = $portfolio_layout;
 
