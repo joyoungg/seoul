@@ -56,18 +56,16 @@ class HouseController extends Controller
                 $house->user = $this->getUser($house);
                 $result[$cnt] = $this->createHouse($house);
 
-                $log = [
+                HouseLog::create([
                     'result' => 'success',
                     'data'   => json_encode($result[$cnt]),
-                ];
+                ]);
                 $cnt++;
             } catch (\Exception $e) {
-                $log = [
+                HouseLog::create([
                     'result' => 'fail',
                     'data'   => json_encode($e->getMessage()),
-                ];
-            } finally {
-                HouseLog::create($log);
+                ]);
             }
         }
         return '<h1>성공</h1>';
