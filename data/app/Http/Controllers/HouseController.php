@@ -62,7 +62,7 @@ class HouseController extends Controller
             $house->is_safe = $this->isSave($house);
             $house->user = $this->getUser($house);
             $user = User::find($house->uidx);
-            $house->type = $houseType[$user->user_type];
+            $house->type_seoul = $houseType[$user->user_type];
             if ($house->iz_zero == 1 && $user->user_type != 'agent') {
                 continue;
             }
@@ -120,7 +120,7 @@ class HouseController extends Controller
     private function isSave($house)
     {
         $flag = 0;
-        if (SafeHouse::whereNotNull('disapproval_at')->where('hidx', $house->hidx)) {
+        if (SafeHouse::whereNull('disapproval_at')->where('hidx', $house->hidx)) {
             $flag = 1;
         }
         return $flag;
