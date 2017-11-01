@@ -44,12 +44,12 @@ class HouseController extends Controller
         $cnt = 0;
         $result = [];
         $houseType = [
-            '중개' => 'Zero부동산',
-            '개인' => '직거래',
+            'agent' => 'Zero부동산',
+            'user' => '직거래',
         ];
         foreach ($housesBuilder->cursor() as $house) {
-            try {
-                dump($cnt);
+//            try {
+//                dump($cnt);
                 $seoul = SeoulHouse::find($house->hidx);
                 if ($seoul) {
                     continue;
@@ -61,7 +61,7 @@ class HouseController extends Controller
                 $house->is_safe = $this->isSave($house);
                 $house->user = $this->getUser($house);
                 $user = User::find($house->uidx);
-                $house->type = $houseType[$user->type];
+                $house->type = $houseType[$user->user_type];
                 $result[$cnt] = $this->createHouse($house);
 
                 HouseLog::create([
@@ -69,12 +69,13 @@ class HouseController extends Controller
                     'data'   => json_encode($result[$cnt]),
                 ]);
                 $cnt++;
-            } catch (\Exception $e) {
-                HouseLog::create([
-                    'result' => 'fail',
-                    'data'   => json_encode($e->getMessage()),
-                ]);
-            }
+//            } catch (\Exception $e) {
+//                throw new \Exception($e->getMessage());
+//                HouseLog::create([
+//                    'result' => 'fail',
+//                    'data'   => json_encode($e->getMessage()),
+//                ]);
+//            }
         }
         return '<h1>성공</h1>';
     }
@@ -300,6 +301,7 @@ class HouseController extends Controller
         foreach ($imgs as $img) {
             SeoulHouseImg::create($img->toArray());
         }
+        dd($imgs);
 
         return $result;
     }
