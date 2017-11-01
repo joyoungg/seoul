@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Agent;
 use App\House;
+use App\HouseImg;
 use App\HouseLog;
 use App\NaverStatus;
 use App\SafeHouse;
 use App\SeoulHouse;
+use App\SeoulHouseImg;
 use App\User;
 use App\WithoutFee;
 use DB;
@@ -54,6 +56,7 @@ class HouseController extends Controller
                 $house->is_zero = $this->isZero($house);
                 $house->is_safe = $this->isSave($house);
                 $house->user = $this->getUser($house);
+                $house->type_seoul =
                 $result[$cnt] = $this->createHouse($house);
 
                 HouseLog::create([
@@ -148,6 +151,7 @@ class HouseController extends Controller
     public function delete()
     {
         $db = DB::delete(DB::raw('DELETE FROM TB_HOUSE_SALE WHERE hidx > 0 AND c_date > \'2017-07-25\''));
+        $db = DB::delete(DB::raw('DELETE FROM TB_HOUSE_IMG WHERE hidx > 0 AND img_idx > 0'));
         dump($db);
     }
 
@@ -286,6 +290,11 @@ class HouseController extends Controller
             'user'                    => $house->user
         ]);
 
+        $imgs = HouseImg::where('hidx', $house->hidx)->get();
+
+        foreach ($imgs as $img) {
+            SeoulHouseImg::create($img->toArray());
+        }
 
         return $result;
     }
