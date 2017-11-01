@@ -120,7 +120,7 @@ class HouseController extends Controller
     private function isSave($house)
     {
         $flag = 0;
-        if (SafeHouse::whereNull('disapproval_at')->where('hidx', $house->hidx)) {
+        if (SafeHouse::whereNull('disapproval_at')->where('hidx', $house->hidx)->first()) {
             $flag = 1;
         }
         return $flag;
