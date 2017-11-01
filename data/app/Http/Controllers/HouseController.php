@@ -45,30 +45,34 @@ class HouseController extends Controller
         $result = [];
         $houseType = [
             'agent' => 'Zero부동산',
-            'user' => '직거래',
+            'user'  => '직거래',
         ];
         foreach ($housesBuilder->cursor() as $house) {
 //            try {
 //                dump($cnt);
-                $seoul = SeoulHouse::find($house->hidx);
-                if ($seoul) {
-                    continue;
-                }
-                $house->move_date = null;
-                $house->ctrtStart = null;
-                $house->idx_naver = $this->getIdxNaver($house);
-                $house->is_zero = $this->isZero($house);
-                $house->is_safe = $this->isSave($house);
-                $house->user = $this->getUser($house);
-                $user = User::find($house->uidx);
-                $house->type = $houseType[$user->user_type];
-                $result[$cnt] = $this->createHouse($house);
+            $seoul = SeoulHouse::find($house->hidx);
+            if ($seoul) {
+                continue;
+            }
+            $house->move_date = null;
+            $house->ctrtStart = null;
+            $house->ctrtEnd = null;
+            $house->idx_naver = $this->getIdxNaver($house);
+            $house->is_zero = $this->isZero($house);
+            $house->is_safe = $this->isSave($house);
+            $house->user = $this->getUser($house);
+            $user = User::find($house->uidx);
+            $house->type = $houseType[$user->user_type];
+            if ($house->iz_zero == 1 && $user->user_type != 'agent') {
+                continue;
+            }
+            $result[$cnt] = $this->createHouse($house);
 
-                HouseLog::create([
-                    'result' => 'success',
-                    'data'   => json_encode($result[$cnt]),
-                ]);
-                $cnt++;
+            HouseLog::create([
+                'result' => 'success',
+                'data'   => json_encode($result[$cnt]),
+            ]);
+            $cnt++;
 //            } catch (\Exception $e) {
 //                throw new \Exception($e->getMessage());
 //                HouseLog::create([
@@ -143,11 +147,20 @@ class HouseController extends Controller
             ];
         } elseif ($user->user_type = 'agent') {
             // {\"info\": {\"대표자\": \"유광연\", \"중개사\": \"피터팬의 좋은방 구하기\", \"대표번호\": \"02-2088-5036\"}, \"type\": \"중개\", \"mapping_number\": \"0505714667264\"}
-            $info = [
-                '대표자'  => $user->agency->ceo_name,
-                '중개사'  => $user->agency->agency_name,
-                '대표번호' => $user->agency->telephone,
-            ];
+            if (isset($user->agency)) {
+                $info = [
+                    '대표자'  => $user->agency->ceo_name,
+                    '중개사'  => $user->agency->agency_name,
+                    '대표번호' => $user->agency->telephone,
+                ];
+            } else {
+                $info = [
+                    '대표자'  => '',
+                    '중개사'  => '',
+                    '대표번호' => '',
+                ];
+            }
+
         }
         $result['info'] = $info;
 
