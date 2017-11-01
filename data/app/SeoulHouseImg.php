@@ -11,6 +11,6 @@ class SeoulHouseImg extends Model
     protected $primaryKey = 'img_idx';
 
     protected $guarded = [];
-    
+
     public $timestamps = false;
 }

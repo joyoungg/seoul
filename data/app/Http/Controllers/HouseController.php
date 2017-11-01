@@ -301,7 +301,6 @@ class HouseController extends Controller
         foreach ($imgs as $img) {
             SeoulHouseImg::create($img->toArray());
         }
-        dd($imgs);
 
         return $result;
     }
