@@ -43,6 +43,10 @@ class HouseController extends Controller
 
         $cnt = 0;
         $result = [];
+        $houseType = [
+            '중개' => 'Zero부동산',
+            '개인' => '직거래',
+        ];
         foreach ($housesBuilder->cursor() as $house) {
             try {
                 dump($cnt);
@@ -56,7 +60,8 @@ class HouseController extends Controller
                 $house->is_zero = $this->isZero($house);
                 $house->is_safe = $this->isSave($house);
                 $house->user = $this->getUser($house);
-                $house->type_seoul =
+                $user = User::find($house->uidx);
+                $house->type = $houseType[$user->type];
                 $result[$cnt] = $this->createHouse($house);
 
                 HouseLog::create([
