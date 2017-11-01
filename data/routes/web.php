@@ -12,5 +12,33 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return '<h1>Welcome to Seoul</h1>';
 });
+
+Route::group([
+    'prefix' => 'house',
+    'as'     => 'house.',
+], function () {
+    Route::get('list', [
+        'as'   => 'list',
+        'uses' => 'HouseController@getList'
+    ]);
+    Route::get('form', [
+        'as'   => 'form',
+        'uses' => 'HouseController@form'
+    ]);
+    Route::post('create', [
+        'as'   => 'create',
+        'uses' => 'HouseController@create',
+    ]);
+    Route::get('upload', [
+        'as'   => 'upload',
+        'uses' => 'HouseController@upload'
+    ]);
+    Route::get('delete', [
+        'as' => 'delete',
+        'uses' => 'HouseController@delete',
+    ]);
+});
+
+
