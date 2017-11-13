@@ -12,18 +12,25 @@ use App\SeoulHouse;
 use App\SeoulHouseImg;
 use App\User;
 use App\WithoutFee;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Http\Request;
 
 class HouseController extends Controller
 {
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function getList(Request $request)
     {
-        $start = $request->get('start_date');
-        $end = $request->get('end_date');
+        // 자동으로 현시점에서 일주일치를 생성함
+        $start = $request->get('start');
+        $end = $request->get('end');
+
         $housesBuilder = $this->getHouseListByDate([$start, $end]);
-        $houses = $housesBuilder->paginate(20);
+        $houses = $housesBuilder->paginate(15);
 
         return view('list', [
             'houses' => $houses,
@@ -37,8 +44,10 @@ class HouseController extends Controller
 
     public function create(Request $request)
     {
-        $start = $request->get('start_date');
-        $end = $request->get('end_date');
+//        $start = $request->get('start_date');
+//        $end = $request->get('end_date');
+        $start = Carbon::now()->subWeek(10)->format('Y-m-d');
+        $end = Carbon::now()->format('Y-m-d');
         $housesBuilder = $this->getHouseListByDate([$start, $end]);
 
         $cnt = 0;
@@ -47,40 +56,51 @@ class HouseController extends Controller
             'agent' => 'Zero부동산',
             'user'  => '직거래',
         ];
-        foreach ($housesBuilder->cursor() as $house) {
-//            try {
-//                dump($cnt);
-            $seoul = SeoulHouse::find($house->hidx);
-            if ($seoul) {
-                continue;
-            }
-            $house->move_date = null;
-            $house->ctrtStart = null;
-            $house->ctrtEnd = null;
-            $house->idx_naver = $this->getIdxNaver($house);
-            $house->is_zero = $this->isZero($house);
-            $house->is_safe = $this->isSave($house);
-            $house->user = $this->getUser($house);
-            $user = User::find($house->uidx);
-            $house->type_seoul = $houseType[$user->user_type];
-            if ($house->iz_zero == 1 && $user->user_type != 'agent') {
-                continue;
-            }
-            $result[$cnt] = $this->createHouse($house);
 
-            HouseLog::create([
-                'result' => 'success',
-                'data'   => json_encode($result[$cnt]),
-            ]);
-            $cnt++;
-//            } catch (\Exception $e) {
-//                throw new \Exception($e->getMessage());
-//                HouseLog::create([
-//                    'result' => 'fail',
-//                    'data'   => json_encode($e->getMessage()),
-//                ]);
-//            }
+        DB::beginTransaction();
+        $this->setClosed();
+        foreach ($housesBuilder->cursor() as $house) {
+            try {
+                $seoul = SeoulHouse::find($house->hidx);
+                if ($seoul) {
+                    continue;
+                }
+
+                $house->move_date = null;
+                $house->ctrtStart = null;
+                $house->ctrtEnd = null;
+                $house->idx_naver = $this->getIdxNaver($house);
+                $house->is_zero = $this->isZero($house);
+                $house->is_safe = $this->isSave($house);
+                $house->user = $this->getUser($house);
+                $user = User::find($house->uidx);
+                // 중개사가 아닌데 제로부동산(그럴리가 없음) 매물 업로드 안함
+                if ($house->iz_zero == 1 && $user->user_type != 'agent') {
+                    continue;
+                }
+                // 중개인 중에 Zero 회원이 아니면 매물 업로드 안함
+                if ($house->is_zero === 0 && $user->user_type === 'agent') {
+                    continue;
+                }
+                $house->type_seoul = $houseType[$user->user_type];
+                $result[$cnt] = $this->createHouse($house);
+
+                HouseLog::create([
+                    'result' => 'success',
+                    'data'   => json_encode($result[$cnt]),
+                ]);
+                $cnt++;
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                HouseLog::create([
+                    'result' => 'fail',
+                    'data'   => json_encode($e->getMessage()),
+                ]);
+                dd($e->getMessage());
+            }
         }
+
         return '<h1>성공</h1>';
     }
 
@@ -91,6 +111,11 @@ class HouseController extends Controller
 
     public function getHouseListByDate(array $dates)
     {
+        $start = Carbon::now()->subWeek(13)->format('Y-m-d');
+        $end = Carbon::now()->format('Y-m-d');
+        $dates[0] = $start;
+        $dates[1] = $end;
+
         $housesBuilder = House::Live()
             ->latest('c_date')
             ->whereBetween('c_date', [$dates[0], $dates[1]]);
@@ -105,6 +130,7 @@ class HouseController extends Controller
             && NaverStatus::find($house->hidx)) {
             $flag = 1;
         }
+
         return $flag;
     }
 
@@ -114,6 +140,7 @@ class HouseController extends Controller
         if (WithoutFee::find($house->hidx)) {
             $flag = 1;
         }
+
         return $flag;
     }
 
@@ -123,6 +150,7 @@ class HouseController extends Controller
         if (SafeHouse::whereNull('disapproval_at')->where('hidx', $house->hidx)->first()) {
             $flag = 1;
         }
+
         return $flag;
     }
 
@@ -138,7 +166,7 @@ class HouseController extends Controller
         $result = [
             'info'           => [],
             'type'           => $type[$user->user_type],
-            'mapping_number' => $user->safe_number
+            'mapping_number' => $user->safe_number,
         ];
         $info = [];
         if ($user->user_type == 'user') {
@@ -184,7 +212,7 @@ class HouseController extends Controller
             'memo'                    => $house->memo,
             'description'             => $house->description,
             'zone_code'               => $house->zone_code,
-            'address_type'            => $house->address_type,
+            'address_type'            => $house->address_type? : 'r',
             'address'                 => $house->address,
             'road_address'            => $house->road_address,
             'jibun_address'           => $house->jibun_address,
@@ -306,7 +334,7 @@ class HouseController extends Controller
             'type_seoul'              => $house->type_seoul,
             'is_safe'                 => $house->is_safe,
             'is_zero'                 => $house->is_zero,
-            'user'                    => $house->user
+            'user'                    => $house->user,
         ]);
 
         $imgs = HouseImg::where('hidx', $house->hidx)->get();
@@ -316,5 +344,20 @@ class HouseController extends Controller
         }
 
         return $result;
+    }
+
+    public function getAllHouseList()
+    {
+        $start = Carbon::now()->subWeek(10)->format('Y-m-d');
+        $end = Carbon::now()->format('Y-m-d');
+        $housesBuilder = $this->getHouseListByDate([$start, $end]);
+
+        return $housesBuilder->get();
+    }
+
+    private function setClosed()
+    {
+        SeoulHouse::where('hidx', '>', 0)
+            ->update(['status' => 'NOT_LIVE']);
     }
 }
