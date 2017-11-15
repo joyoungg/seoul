@@ -15,10 +15,16 @@ class House extends Model
     public $timestamps = false;
 
 
-    public function scopeLive($query)
+    public function userType()
+    {
+        return $this->belongsTo(User::class, 'uidx', 'uidx');
+    }
+
+    public function scopeWithLive($query)
     {
         $query->where('status', 'LIVE')
             ->where('pp_op_validation', 1)
             ->whereIn('status_code', ['0101', '0102', '0103']);
     }
+
 }

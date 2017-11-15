@@ -18,4 +18,9 @@ class User extends Model
     {
         return $this->hasOne(Agent::class, 'uidx', 'uidx');
     }
+
+    public function houses()
+    {
+        return $this->hasMany(House::class, 'uidx', 'uidx');
+    }
 }

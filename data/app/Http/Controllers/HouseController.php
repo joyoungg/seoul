@@ -48,7 +48,10 @@ class HouseController extends Controller
 //        $end = $request->get('end_date');
         $start = Carbon::now()->subWeek(10)->format('Y-m-d');
         $end = Carbon::now()->format('Y-m-d');
+        // 일주일전 매물 리스트 가져오기
         $housesBuilder = $this->getHouseListByDate([$start, $end]);
+
+        // 한달에 한번씩 NOT LIVE 처리하기
 
         $cnt = 0;
         $result = [];
@@ -58,7 +61,7 @@ class HouseController extends Controller
         ];
 
         DB::beginTransaction();
-        $this->setClosed();
+//        $this->setClosed();       // 라이브 끄는 기능은 한달에 한번만 시행!!
         foreach ($housesBuilder->cursor() as $house) {
             try {
                 $seoul = SeoulHouse::find($house->hidx);
@@ -72,21 +75,29 @@ class HouseController extends Controller
                 $house->idx_naver = $this->getIdxNaver($house);
                 $house->is_zero = $this->isZero($house);
                 $house->is_safe = $this->isSave($house);
-                $house->user = $this->getUser($house);
-                $user = User::find($house->uidx);
+//                $house->user = $this->getUser($house);
+                if ($house->userType === 'gosin') {
+                    continue;
+                }
                 // 중개사가 아닌데 제로부동산(그럴리가 없음) 매물 업로드 안함
-                if ($house->iz_zero == 1 && $user->user_type != 'agent') {
+                if ($house->iz_zero == 1 && $house->userType != 'agent') {
                     continue;
                 }
                 // 중개인 중에 Zero 회원이 아니면 매물 업로드 안함
-                if ($house->is_zero === 0 && $user->user_type === 'agent') {
+                if ($house->is_zero === 0 && $house->userType === 'agent') {
                     continue;
                 }
-                $house->type_seoul = $houseType[$user->user_type];
+                if (empty($house->userType)) {
+                    $userType = 'user';
+                } else {
+                    $userType = $house->userType->user_type;
+                }
+
+                $house->type_seoul = $houseType[$userType];
                 $result[$cnt] = $this->createHouse($house);
 
                 HouseLog::create([
-                    'result' => 'success',
+                    'result' => 'insert success',
                     'data'   => json_encode($result[$cnt]),
                 ]);
                 $cnt++;
@@ -94,14 +105,14 @@ class HouseController extends Controller
             } catch (\Exception $e) {
                 DB::rollBack();
                 HouseLog::create([
-                    'result' => 'fail',
+                    'result' => 'insert fail',
                     'data'   => json_encode($e->getMessage()),
                 ]);
-                dd($e->getMessage());
+                return $e->getMessage();
             }
         }
 
-        return '<h1>성공</h1>';
+        return "{$cnt}개 성공";
     }
 
     public function upload()
@@ -111,13 +122,15 @@ class HouseController extends Controller
 
     public function getHouseListByDate(array $dates)
     {
+        // 현재 시점에서 일주일 전것을 가져옴
         $start = Carbon::now()->subWeek(13)->format('Y-m-d');
         $end = Carbon::now()->format('Y-m-d');
         $dates[0] = $start;
         $dates[1] = $end;
 
-        $housesBuilder = House::Live()
+        $housesBuilder = House::withLive()
             ->latest('c_date')
+            ->where('hidx', '>', 1000000)
             ->whereBetween('c_date', [$dates[0], $dates[1]]);
 
         return $housesBuilder;
@@ -125,7 +138,7 @@ class HouseController extends Controller
 
     private function getIdxNaver($house)
     {
-        $flag = 0;
+        $flag = null;
         if (in_array($house->status_code, ['0101', '0102', '0103'])
             && NaverStatus::find($house->hidx)) {
             $flag = 1;
@@ -197,9 +210,30 @@ class HouseController extends Controller
 
     public function delete()
     {
-        $db = DB::delete(DB::raw('DELETE FROM TB_HOUSE_SALE WHERE hidx > 0 AND c_date > \'2017-07-25\''));
-        $db = DB::delete(DB::raw('DELETE FROM TB_HOUSE_IMG WHERE hidx > 0 AND img_idx > 0'));
-        dump($db);
+//        $db = DB::delete(DB::raw('DELETE FROM TB_HOUSE_SALE WHERE hidx > 0 AND c_date > \'2017-07-25\''));
+//        $db = DB::delete(DB::raw('DELETE FROM TB_HOUSE_IMG WHERE hidx > 0 AND img_idx > 0'));
+//        dump($db);
+        DB::beginTransaction();
+        try {
+            $seoulHouse = SeoulHouse::select('c_date')
+                ->where('c_date', '<=', Carbon::now()->subMonth())
+                ->where('hidx', '>', 1000000)
+                ->update(['status' => 'NOT_LIVE']);
+            HouseLog::create([
+                'result' => 'delete success',
+                'data'   => json_encode($seoulHouse),
+            ]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            HouseLog::create([
+                'result' => 'delete fail',
+                'data'   => json_encode($e->getMessage()),
+            ]);
+            return $e->getMessage();
+        }
+
+        return "삭제 성공";
     }
 
     private function createHouse($house)
@@ -212,7 +246,7 @@ class HouseController extends Controller
             'memo'                    => $house->memo,
             'description'             => $house->description,
             'zone_code'               => $house->zone_code,
-            'address_type'            => $house->address_type? : 'r',
+            'address_type'            => $house->address_type ?: 'r',
             'address'                 => $house->address,
             'road_address'            => $house->road_address,
             'jibun_address'           => $house->jibun_address,
@@ -346,7 +380,8 @@ class HouseController extends Controller
         return $result;
     }
 
-    public function getAllHouseList()
+    public
+    function getAllHouseList()
     {
         $start = Carbon::now()->subWeek(10)->format('Y-m-d');
         $end = Carbon::now()->format('Y-m-d');
@@ -355,7 +390,8 @@ class HouseController extends Controller
         return $housesBuilder->get();
     }
 
-    private function setClosed()
+    private
+    function setClosed()
     {
         SeoulHouse::where('hidx', '>', 0)
             ->update(['status' => 'NOT_LIVE']);
