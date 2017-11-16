@@ -75,7 +75,6 @@ class HouseController extends Controller
                 $house->idx_naver = $this->getIdxNaver($house);
                 $house->is_zero = $this->isZero($house);
                 $house->is_safe = $this->isSave($house);
-                $house->user = $this->getUser($house);
                 if ($house->userType === 'gosin') {
                     continue;
                 }
@@ -94,7 +93,7 @@ class HouseController extends Controller
                 }
 
                 $house->type_seoul = $houseType[$userType];
-                $house->user = $house->userType;
+                $house->user = $this->getUser($house);
                 $result[$cnt] = $this->createHouse($house);
 
                 HouseLog::create([

@@ -37,7 +37,8 @@ class Kernel extends ConsoleKernel
                 $m->to('luritas@duse.co.kr', '김재국')->subject("주간데이터 삽입");
             });
         })
-            ->dailyAt('06:00');
+            ->everyMinute();
+//            ->dailyAt('06:00');
 //            ->weeklyOn(0, '04:00')
 //            ->timezone('Asia/Seoul');
 
