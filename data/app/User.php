@@ -16,7 +16,7 @@ class User extends Model
 
     public function agency()
     {
-        return $this->hasOne(Agent::class, 'uidx', 'uidx');
+        return $this->hasOne(Agent::class, 'uidx', 'master_id');
     }
 
     public function houses()
