@@ -14,12 +14,6 @@ class User extends Model
 
     public $timestamps = false;
 
-    public function getSafeNumberByMobile()
-    {
-        $number = SafeNumber::where('user_number', str_replace('-', '', $this->mobile));
-
-        return $number->value('safe_number');
-    }
 
     public function agency()
     {
