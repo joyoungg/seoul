@@ -75,15 +75,15 @@ class HouseController extends Controller
                 $house->idx_naver = $this->getIdxNaver($house);
                 $house->is_zero = $this->isZero($house);
                 $house->is_safe = $this->isSave($house);
-                if ($house->userType === 'gosin') {
+                if ($house->userType->user_type === 'gosin') {
                     continue;
                 }
                 // 중개사가 아닌데 제로부동산(그럴리가 없음) 매물 업로드 안함
-                if ($house->iz_zero == 1 && $house->userType != 'agent') {
+                if ($house->iz_zero == 1 && $house->userType->user_type != 'agent') {
                     continue;
                 }
                 // 중개인 중에 Zero 회원이 아니면 매물 업로드 안함
-                if ($house->is_zero === 0 && $house->userType === 'agent') {
+                if ($house->is_zero === 0 && $house->userType->user_type === 'agent') {
                     continue;
                 }
                 if (empty($house->userType)) {
@@ -101,6 +101,7 @@ class HouseController extends Controller
                     'data'   => json_encode($result[$cnt]),
                 ]);
                 $cnt++;
+                echo "{$cnt}번째 성공 \n";
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollBack();
@@ -149,7 +150,7 @@ class HouseController extends Controller
 
     private function isZero($house)
     {
-        $flag = 0;
+        $flag = null;
         if (WithoutFee::find($house->hidx)) {
             $flag = 1;
         }
