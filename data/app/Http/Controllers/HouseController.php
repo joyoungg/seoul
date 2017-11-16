@@ -80,11 +80,11 @@ class HouseController extends Controller
                     continue;
                 }
                 // 중개사가 아닌데 제로부동산(그럴리가 없음) 매물 업로드 안함
-                if (empty($house->iz_zero) && $house->userType->user_type != 'agent') {
+                if ($house->iz_zero == 1 && $house->userType->user_type != 'agent') {
                     continue;
                 }
                 // 중개인 중에 Zero 회원이 아니면 매물 업로드 안함
-                if ($house->is_zero == 1 && $house->userType->user_type === 'agent') {
+                if ($house->is_zero == 0 && $house->userType->user_type === 'agent') {
                     continue;
                 }
                 if (empty($house->userType)) {
