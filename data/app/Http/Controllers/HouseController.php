@@ -83,7 +83,7 @@ class HouseController extends Controller
                     continue;
                 }
                 // 중개인 중에 Zero 회원이 아니면 매물 업로드 안함
-                if ($house->is_zero === 0 && $house->userType->user_type === 'agent') {
+                if (empty($house->is_zero) && $house->userType->user_type === 'agent') {
                     continue;
                 }
                 if (empty($house->userType)) {
