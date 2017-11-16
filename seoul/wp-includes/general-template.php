@@ -56,7 +56,8 @@ function get_header( $name = null ) {
  *
  * @since 1.5.0
  *
- * @param string $name The name of the specialised footer.
+ * @param
+ * string $name The name of the specialised footer.
  */
 function get_footer( $name = null ) {
 	/**

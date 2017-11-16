@@ -177,7 +177,6 @@ $route->addRoute('/house/create', function () {
         ]
     ]);
     $this->responseBoy = Controller::createHouse($start, $end);
-
 });
 
 $route->dispatch(PATH);

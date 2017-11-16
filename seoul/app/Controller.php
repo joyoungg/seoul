@@ -229,6 +229,7 @@ class Controller
                 })
                 ->where('TB_HOUSE_IMG.type', 'S')
                 ->where('TB_HOUSE_IMG.usage', '1')
+                ->whereNull('TB_HOUSE_IMG.deleted_at')
                 ->orderBy('m_date')
                 ->paginate($perPage, ['*'], 'page', $page)
                 ->toArray();
