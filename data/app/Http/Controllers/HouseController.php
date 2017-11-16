@@ -46,7 +46,7 @@ class HouseController extends Controller
     {
 //        $start = $request->get('start_date');
 //        $end = $request->get('end_date');
-        $start = Carbon::now()->subWeek()->format('Y-m-d');
+        $start = Carbon::now()->subDay()->format('Y-m-d');
         $end = Carbon::now()->format('Y-m-d');
         // 일주일전 매물 리스트 가져오기
         $housesBuilder = $this->getHouseListByDate([$start, $end]);
