@@ -50,6 +50,7 @@ class HouseController extends Controller
         $end = Carbon::now()->format('Y-m-d');
         // 일주일전 매물 리스트 가져오기
         $housesBuilder = $this->getHouseListByDate([$start, $end]);
+        dd($housesBuilder->toSql());
 
         // 한달에 한번씩 NOT LIVE 처리하기
 
@@ -132,6 +133,12 @@ class HouseController extends Controller
         $housesBuilder = House::withLive()
             ->latest('c_date')
             ->where('hidx', '>', 1000000)
+            ->where(function ($query) {
+                $query->orWhere('sido', '서울');
+                $query->orWhere('sido', '서울시');
+                $query->orWhere('sido', '서울특별시');
+
+            })
             ->whereBetween('c_date', [$dates[0], $dates[1]]);
 
         return $housesBuilder;
