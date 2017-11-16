@@ -8,6 +8,7 @@ use App\HouseImg;
 use App\HouseLog;
 use App\NaverStatus;
 use App\SafeHouse;
+use App\SafeNumber;
 use App\SeoulHouse;
 use App\SeoulHouseImg;
 use App\User;
@@ -79,7 +80,7 @@ class HouseController extends Controller
                     continue;
                 }
                 // 중개사가 아닌데 제로부동산(그럴리가 없음) 매물 업로드 안함
-                if ($house->iz_zero == 1 && $house->userType->user_type != 'agent') {
+                if (empty($house->iz_zero) && $house->userType->user_type != 'agent') {
                     continue;
                 }
                 // 중개인 중에 Zero 회원이 아니면 매물 업로드 안함
@@ -185,6 +186,10 @@ class HouseController extends Controller
             'agent' => '중개',
             'gosin' => '중개',
         ];
+        // 크롤리매물이면 안심번호 따로 찾기 contact_phone_num
+        if ($user->uidx === 83876) {
+            $user->safe_number = $house->getSafeNumberByMobile();
+        }
 
         $result = [
             'info'           => [],
@@ -406,4 +411,5 @@ class HouseController extends Controller
         SeoulHouse::where('hidx', '>', 0)
             ->update(['status' => 'NOT_LIVE']);
     }
+
 }

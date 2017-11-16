@@ -14,6 +14,12 @@ class House extends Model
 
     public $timestamps = false;
 
+    public function getSafeNumberByMobile()
+    {
+        $number = SafeNumber::where('user_number', str_replace('-', '', $this->contact_phone_num));
+
+        return $number->value('safe_number');
+    }
 
     public function userType()
     {
