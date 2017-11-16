@@ -46,7 +46,7 @@ class HouseController extends Controller
     {
 //        $start = $request->get('start_date');
 //        $end = $request->get('end_date');
-        $start = Carbon::now()->subWeek(10)->format('Y-m-d');
+        $start = Carbon::now()->subWeek()->format('Y-m-d');
         $end = Carbon::now()->format('Y-m-d');
         // 일주일전 매물 리스트 가져오기
         $housesBuilder = $this->getHouseListByDate([$start, $end]);
@@ -75,7 +75,7 @@ class HouseController extends Controller
                 $house->idx_naver = $this->getIdxNaver($house);
                 $house->is_zero = $this->isZero($house);
                 $house->is_safe = $this->isSave($house);
-//                $house->user = $this->getUser($house);
+                $house->user = $this->getUser($house);
                 if ($house->userType === 'gosin') {
                     continue;
                 }
@@ -94,6 +94,7 @@ class HouseController extends Controller
                 }
 
                 $house->type_seoul = $houseType[$userType];
+                $house->user = $house->userType;
                 $result[$cnt] = $this->createHouse($house);
 
                 HouseLog::create([
@@ -123,10 +124,10 @@ class HouseController extends Controller
     public function getHouseListByDate(array $dates)
     {
         // 현재 시점에서 일주일 전것을 가져옴
-        $start = Carbon::now()->subWeek(13)->format('Y-m-d');
-        $end = Carbon::now()->format('Y-m-d');
-        $dates[0] = $start;
-        $dates[1] = $end;
+//        $start = Carbon::now()->subDay()->format('Y-m-d');
+//        $end = Carbon::now()->format('Y-m-d');
+//        $dates[0] = $start;
+//        $dates[1] = $end;
 
         $housesBuilder = House::withLive()
             ->latest('c_date')
@@ -170,6 +171,9 @@ class HouseController extends Controller
     private function getUser($house)
     {
         $user = User::find($house->uidx);
+        if (empty($user)) {
+            return null;
+        }
         $type = [
             'user'  => '개인',
             'agent' => '중개',
@@ -383,7 +387,7 @@ class HouseController extends Controller
     public
     function getAllHouseList()
     {
-        $start = Carbon::now()->subWeek(10)->format('Y-m-d');
+        $start = Carbon::now()->subWeek()->format('Y-m-d');
         $end = Carbon::now()->format('Y-m-d');
         $housesBuilder = $this->getHouseListByDate([$start, $end]);
 
