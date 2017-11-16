@@ -151,7 +151,7 @@ class HouseController extends Controller
     private function isZero($house)
     {
         $flag = null;
-        if (WithoutFee::find($house->hidx)) {
+        if (WithoutFee::where('hidx', $house->hidx)->first()) {
             $flag = 1;
         }
 
