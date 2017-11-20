@@ -29,7 +29,6 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-        return;
         $schedule->call(function () {
             $house = new HouseController();
             $result = $house->create(new Request());
