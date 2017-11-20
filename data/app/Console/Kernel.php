@@ -38,7 +38,7 @@ class Kernel extends ConsoleKernel
             });
         })
             ->everyMinute();
-//            ->dailyAt('06:00');
+            //->dailyAt('06:00');
 //            ->weeklyOn(0, '04:00')
 //            ->timezone('Asia/Seoul');
 

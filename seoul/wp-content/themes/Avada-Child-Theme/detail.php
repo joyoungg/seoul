@@ -2,6 +2,7 @@
 /**
  * Template name: detail view
  */
+
 use App\RealEstate;
 
 
@@ -9,14 +10,21 @@ use App\RealEstate;
 get_header();
 ?>
 <style>
-	.fusion-header-wrapper {
-		z-index: 0;
-	}
+    .fusion-header-wrapper {
+        z-index: 0;
+    }
+    #menu-main-mune {
+        display: none;
+    }
+    #main {
+        padding-top: 0;
+    }
 </style>
 
-<link rel="stylesheet" type="text/css" href="<?=get_template_directory_uri()?>-Child-Theme/css/fontello.css">
-<link rel="stylesheet" type="text/css" href="<?=get_template_directory_uri()?>-Child-Theme/css/detail.css">
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="<?= get_template_directory_uri() ?>-Child-Theme/css/fontello.css">
+<link rel="stylesheet" type="text/css" href="<?= get_template_directory_uri() ?>-Child-Theme/css/detail.css">
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 
 <div id="detailWrapper">
@@ -31,29 +39,47 @@ get_header();
                         <div class="slide_buttons"></div>
                     </div>
                     <div class="previous_btn" title="Previous">
-                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="65px" height="65px" viewBox="-11 -11.5 65 66">
-                          <g>
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                             x="0px" y="0px" width="65px" height="65px" viewBox="-11 -11.5 65 66">
                             <g>
-                              <path fill="#fff" d="M-10.5,22.118C-10.5,4.132,4.133-10.5,22.118-10.5S54.736,4.132,54.736,22.118
+                                <g>
+                                    <path fill="#fff" d="M-10.5,22.118C-10.5,4.132,4.133-10.5,22.118-10.5S54.736,4.132,54.736,22.118
                                 c0,17.985-14.633,32.618-32.618,32.618S-10.5,40.103-10.5,22.118z M-8.288,22.118c0,16.766,13.639,30.406,30.406,30.406 c16.765,0,30.405-13.641,30.405-30.406c0-16.766-13.641-30.406-30.405-30.406C5.35-8.288-8.288,5.352-8.288,22.118z"/>
-                              <path fill="#fff" d="M25.43,33.243L14.628,22.429c-0.433-0.432-0.433-1.132,0-1.564L25.43,10.051c0.432-0.432,1.132-0.432,1.563,0    c0.431,0.431,0.431,1.132,0,1.564L16.972,21.647l10.021,10.035c0.432,0.433,0.432,1.134,0,1.564    c-0.215,0.218-0.498,0.323-0.78,0.323C25.929,33.569,25.646,33.464,25.43,33.243z"/>
+                                    <path fill="#fff"
+                                          d="M25.43,33.243L14.628,22.429c-0.433-0.432-0.433-1.132,0-1.564L25.43,10.051c0.432-0.432,1.132-0.432,1.563,0    c0.431,0.431,0.431,1.132,0,1.564L16.972,21.647l10.021,10.035c0.432,0.433,0.432,1.134,0,1.564    c-0.215,0.218-0.498,0.323-0.78,0.323C25.929,33.569,25.646,33.464,25.43,33.243z"/>
+                                </g>
                             </g>
-                          </g>
                         </svg>
                     </div>
                     <div class="next_btn" title="Next">
-                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="65px" height="65px" viewBox="-11 -11.5 65 66">
-                          <g>
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                             x="0px" y="0px" width="65px" height="65px" viewBox="-11 -11.5 65 66">
                             <g>
-                              <path fill="#fff" d="M22.118,54.736C4.132,54.736-10.5,40.103-10.5,22.118C-10.5,4.132,4.132-10.5,22.118-10.5   c17.985,0,32.618,14.632,32.618,32.618C54.736,40.103,40.103,54.736,22.118,54.736z M22.118-8.288  c-16.765,0-30.406,13.64-30.406,30.406c0,16.766,13.641,30.406,30.406,30.406c16.768,0,30.406-13.641,30.406-30.406 C52.524,5.352,38.885-8.288,22.118-8.288z"/>
-                              <path fill="#fff" d="M18.022,33.569c 0.282,0-0.566-0.105-0.781-0.323c-0.432-0.431-0.432-1.132,0-1.564l10.022-10.035           L17.241,11.615c 0.431-0.432-0.431-1.133,0-1.564c0.432-0.432,1.132-0.432,1.564,0l10.803,10.814c0.433,0.432,0.433,1.132,0,1.564 L18.805,33.243C18.59,33.464,18.306,33.569,18.022,33.569z"/>
+                                <g>
+                                    <path fill="#fff"
+                                          d="M22.118,54.736C4.132,54.736-10.5,40.103-10.5,22.118C-10.5,4.132,4.132-10.5,22.118-10.5   c17.985,0,32.618,14.632,32.618,32.618C54.736,40.103,40.103,54.736,22.118,54.736z M22.118-8.288  c-16.765,0-30.406,13.64-30.406,30.406c0,16.766,13.641,30.406,30.406,30.406c16.768,0,30.406-13.641,30.406-30.406 C52.524,5.352,38.885-8.288,22.118-8.288z"/>
+                                    <path fill="#fff"
+                                          d="M18.022,33.569c 0.282,0-0.566-0.105-0.781-0.323c-0.432-0.431-0.432-1.132,0-1.564l10.022-10.035           L17.241,11.615c 0.431-0.432-0.431-1.133,0-1.564c0.432-0.432,1.132-0.432,1.564,0l10.803,10.814c0.433,0.432,0.433,1.132,0,1.564 L18.805,33.243C18.59,33.464,18.306,33.569,18.022,33.569z"/>
+                                </g>
                             </g>
-                          </g>
                         </svg>
                     </div>
                 </div>
             </div>
             <div class="col-md-4 sidebar"></div>
+            <div class="col-md-4" style="padding:0; width: 300px;">
+                <div class="alert alert-info">
+                    <strong>Zero 부동산이란?</strong>
+                    <p>피터팬의 좋은방 구하기에서 제공하는 서비스로써 세입자에게 수수료를 받지 않고 임대인과 임차인을 연결해줍니다. </p>
+                    <p class="text-right"> <b><a href="www.peterpanz.com">피터팬 바로가기 ></a> </b></p>
+                </div>
+            </div>
+            <div class="col-md-4" style="padding:0; width: 300px;">
+                <div class="alert alert-danger">
+                    <strong>주의사항</strong>
+                    <p>해당매물의 가격은 실거래 가격이 아니므로 계약서 작성시 가격변동이 있을수 있습니다.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -67,15 +93,17 @@ get_header();
 </div>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js" integrity="sha256-ihAoc6M/JPfrIiIeayPE9xjin4UWjsx2mjW/rtmxLM4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"
+        integrity="sha256-ihAoc6M/JPfrIiIeayPE9xjin4UWjsx2mjW/rtmxLM4=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f9314f7505ce4d3a8f9e3957b591043e&libraries=services,clusterer,drawing"></script>
-<script src="<?=get_template_directory_uri()?>-Child-Theme/js/bundle.js"></script>
+<script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f9314f7505ce4d3a8f9e3957b591043e&libraries=services,clusterer,drawing"></script>
+<script src="<?= get_template_directory_uri() ?>-Child-Theme/js/bundle.js"></script>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         var id = getUrlParameter('houseId');
         window.prep = new PeterpanDetail(id).init();
 

@@ -126,4 +126,7 @@ div.radioContainer div.box > div  input {
     margin-left: 0 !important;
 }
 
+div.kboard-avatar-poweredby > a {
+    display: none;
+}
 

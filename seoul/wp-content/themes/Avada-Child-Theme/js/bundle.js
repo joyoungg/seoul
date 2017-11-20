@@ -289,7 +289,7 @@ var PeterpanDetail = function () {
                             str += _this2.utils.convertMoney(monthly_fee);
                         }
                         return str;
-                    }() + '</span>\n                        </div>\n                        <div class="location">' + sido + ' ' + sigungu + ' ' + dong + '</div>\n                        <div class="agency">\n                            <div class="title">' + info['중개사'] + '</div>\n                            <div class="president">\uB300\uD45C\uC790: ' + info['대표자'] + '</div>\n                            <div>' + info['주소'] + '</div>\n                            <div class="safe_contact">\uC548\uC2EC\uBC88\uD638: ' + mapping_number + '</div>\n                        </div>\n                    </div>\n                ';
+                    }() + '</span>\n                        </div>\n                        <div class="location">' + sido + ' ' + sigungu + ' ' + dong + '</div>\n                        <div class="agency">\n                            <div class="title">' + info['중개사'] + '</div>\n                            <div class="president">\uB300\uD45C\uC790: ' + info['대표자'] + '</div>\n                            <div class="safe_contact">\uC548\uC2EC\uBC88\uD638: ' + mapping_number + '</div>\n                        </div>\n                    </div>\n                ';
 
                     $('.sidebar').append($(TEMPLATE));
                     break;
