@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "52ca41e02538295b340a82cced1df8ff",
+    "content-hash": "278b935d3ca8f49bf1dd43da7e5e9c53",
     "packages": [
         {
             "name": "arrilot/laravel-widgets",
@@ -3497,6 +3497,34 @@
                 "panel"
             ],
             "time": "2017-11-04T04:19:22+00:00"
+        },
+        {
+            "name": "test-hook",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/larapack/test-hook.git",
+                "reference": "v1.0.0"
+            },
+            "require": {
+                "larapack/hooks": "~1.0"
+            },
+            "type": "library",
+            "extra": {
+                "hook": {
+                    "providers": [
+                        "TestHook\\TestHookServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TestHook\\": "src/"
+                }
+            },
+            "notification-url": "https://larapack.io/downloads",
+            "description": "This is my first hook.",
+            "time": "2017-11-19T18:11:15+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
